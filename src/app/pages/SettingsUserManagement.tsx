@@ -15,7 +15,7 @@ type QueueUser = User | UserBrief;
 export function SettingsUserManagement() {
   const navigate = useNavigate();
   const updateMutation = useUpdateUserMutation();
-  const { data: queryUsers } = useUsersQuery();
+  const { data: queryUsers, isLoading, isError, error } = useUsersQuery();
   const users: QueueUser[] = queryUsers ?? [];
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -34,7 +34,7 @@ export function SettingsUserManagement() {
       const matchesSearch =
         searchQuery === "" ||
         fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        user.id.toLowerCase().includes(searchQuery.toLowerCase());
+        (user.id?.toLowerCase?.() ?? "").includes(searchQuery.toLowerCase());
 
       const matchesRole = filterRole === "ALL" || user.role === filterRole;
       const matchesStatus =
@@ -185,7 +185,29 @@ export function SettingsUserManagement() {
               </tr>
             </thead>
             <tbody>
-              {filteredUsers.length === 0 ? (
+              {isLoading ? (
+                <tr>
+                  <td
+                    colSpan={7}
+                    className="px-4 py-8 text-center text-sm text-gray-500"
+                  >
+                    Loading users...
+                  </td>
+                </tr>
+              ) : isError ? (
+                <tr>
+                  <td
+                    colSpan={7}
+                    className="px-4 py-8 text-center text-sm text-red-500"
+                  >
+                    {typeof error === "string"
+                      ? error
+                      : error instanceof Error
+                      ? error.message
+                      : "Failed to load users. Please refresh."}
+                  </td>
+                </tr>
+              ) : filteredUsers.length === 0 ? (
                 <tr>
                   <td
                     colSpan={7}
