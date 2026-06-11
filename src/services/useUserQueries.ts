@@ -20,6 +20,7 @@ export const useUsersQuery = () => {
     queryFn: fetchUsers,
     staleTime: 10000,
     refetchOnWindowFocus: false,
+    retry: false,
   });
 };
 
